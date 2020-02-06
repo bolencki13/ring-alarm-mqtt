@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  ring-alarm-mqtt:
+    container_name: ring-alarm-mqtt
+    build: .
+    environment:
+        - MQTTHOST=${MQTTHOST}
+        - MQTTPORT=${MQTTPORT}
+        - MQTTRINGTOPIC=${MQTTRINGTOPIC}
+        - MQTTHASSTOPIC=${MQTTHASSTOPIC}
+        - MQTTUSER=${MQTTUSER}
+        - MQTTPASSWORD=${MQTTPASSWORD}
+        - RINGUSER=${RINGUSER}
+        - RINGPASS=${RINGPASS}
+        - DEBUG=*
+    ports: []
+    volumes:
+      - .:/srv
+      - /srv/node_modules
+    command: nodemon

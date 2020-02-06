@@ -30,7 +30,7 @@ function sleep(sec) {
     return new Promise(res => setTimeout(res, sec*1000));
 }
 
-// Set unreachable status on exit 
+// Set unreachable status on exit
 async function processExit(options, exitCode) {
     if (options.cleanup) {
         ringLocations.forEach(async location => {
@@ -53,7 +53,7 @@ async function hasAlarm(location) {
     }
     return false
 }
-    
+
 // Establich websocket connections and register/refresh location status on connect/disconnect
 async function processLocations(locations) {
     ringLocations.forEach(async location => {
@@ -82,7 +82,7 @@ function supportedDevice(device) {
     switch(device.deviceType) {
         case 'sensor.contact':
             // If device name inclused "Windows" assume it's a window sensor, otherwise use door
-            device.className = (device.data.name.match(/window/i)) ? 'window' : 'door' 
+            device.className = (device.data.name.match(/window/i)) ? 'window' : 'door'
             device.component = 'binary_sensor'
             break;
         case 'sensor.motion':
@@ -94,7 +94,7 @@ function supportedDevice(device) {
             device.component = 'binary_sensor'
             break;
         case 'alarm.smoke':
-            device.className = 'smoke' 
+            device.className = 'smoke'
             device.component = 'binary_sensor'
             break;
         case 'alarm.co':
@@ -123,8 +123,8 @@ function supportedDevice(device) {
             device.component = 'light'
             device.command = true
     }
-    
-    // Check if device is a lock	
+
+    // Check if device is a lock
     if (/^lock($|\.)/.test(device.data.deviceType)) {
         device.component = 'lock'
         device.command = true
@@ -147,7 +147,7 @@ function getBatteryLevel(device) {
 
 // Loop through alarm devices at location and publish each one
 async function publishAlarm(location) {
-    if (republishCount < 1) { republishCount = 1 } 
+    if (republishCount < 1) { republishCount = 1 }
     while (republishCount > 0 && publishEnabled && mqttConnected) {
         try {
             const availabilityTopic = ringTopic+'/'+location.locationId+'/status'
@@ -205,9 +205,9 @@ async function publishDevice(device) {
         const stateTopic = sensorTopic+'/state'
         const attributesTopic = deviceTopic+'/attributes'
         const configTopic = 'homeassistant/'+device.component+'/'+locationId+'/'+sensorId+'/config'
-    
+
         // Build the MQTT discovery message
-        const message = { 
+        const message = {
             name: deviceName,
             unique_id: sensorId,
             availability_topic: availabilityTopic,
@@ -233,7 +233,7 @@ async function publishDevice(device) {
             mqttClient.subscribe(sensorTopic+'/brightness_command')
         }
 
-        // If binary sensor include device class to help set icons in UI 
+        // If binary sensor include device class to help set icons in UI
         if (className) {
             message.device_class = className
         }
@@ -268,7 +268,7 @@ function publishDeviceData(data, deviceTopic) {
             break;
         case 'alarm.smoke':
         case 'alarm.co':
-            deviceState = data.alarmStatus === 'active' ? 'ON' : 'OFF' 
+            deviceState = data.alarmStatus === 'active' ? 'ON' : 'OFF'
             break;
         case 'listener.smoke-co':
             const coAlarmState = data.co && data.co.alarmStatus === 'active' ? 'ON' : 'OFF'
@@ -281,7 +281,7 @@ function publishDeviceData(data, deviceTopic) {
             const freezeAlarmState = data.freeze && data.freeze.faulted ? 'ON' : 'OFF'
             publishMqttState(deviceTopic+'/moisture/state', floodAlarmState)
             publishMqttState(deviceTopic+'/cold/state', freezeAlarmState)
-            break;                
+            break;
         case 'security-panel':
             switch(data.mode) {
                 case 'none':
@@ -407,7 +407,7 @@ async function setAlarmMode(location, deviceId, message) {
 async function setLockTargetState(location, deviceId, message) {
     debug('Received set lock state '+message+' for lock Id: '+deviceId)
     debug('Location Id: '+ location.locationId)
-    
+
     const command = message.toLowerCase()
 
     switch(command) {
@@ -469,7 +469,7 @@ async function processCommand(topic, message) {
         if (message == 'online') {
             debug('Resending device config/state in 30 seconds')
             // Make sure any existing republish dies
-            republishCount = 0 
+            republishCount = 0
             await sleep(republishDelay+5)
             // Reset republish counter and start publishing config/state
             republishCount = 10
@@ -486,7 +486,7 @@ async function processCommand(topic, message) {
 
         // Get alarm by location ID
         const location = await ringLocations.find(location => location.locationId == locationId)
-    
+
         switch(component) {
             case 'alarm_control_panel':
                 setAlarmMode(location, deviceId, message)
