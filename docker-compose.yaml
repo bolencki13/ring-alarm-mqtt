@@ -4,18 +4,16 @@ services:
   ring-alarm-mqtt:
     container_name: ring-alarm-mqtt
     build: .
-    environment:
-        - MQTTHOST=${MQTTHOST}
-        - MQTTPORT=${MQTTPORT}
-        - MQTTRINGTOPIC=${MQTTRINGTOPIC}
-        - MQTTHASSTOPIC=${MQTTHASSTOPIC}
-        - MQTTUSER=${MQTTUSER}
-        - MQTTPASSWORD=${MQTTPASSWORD}
-        - RINGUSER=${RINGUSER}
-        - RINGPASS=${RINGPASS}
-        - DEBUG=*
+    env_file:
+      .env
     ports: []
     volumes:
       - .:/srv
       - /srv/node_modules
     command: nodemon
+    networks:
+      - mqtt-bridge
+
+networks:
+  mqtt-bridge:
+    driver: "bridge"
