@@ -3,6 +3,7 @@
 // Defines
 var RingApi = require('ring-client-api').RingApi
 const fs = require('fs')
+const debugError = require('debug')('error')
 var CONFIG
 var ringTopic
 var hassTopic
@@ -76,7 +77,7 @@ const main = async() => {
         debugError( colors.red( 'or maybe the password is wrong. Please check settings and try again.' ))
         process.exit(1)
     }
-    
+
     const devices = await ringLocations[0].getDevices()
     let devData = JSON.stringify(devices);
     fs.writeFileSync('devices.txt', devices);

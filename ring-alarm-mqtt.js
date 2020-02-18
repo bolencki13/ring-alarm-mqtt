@@ -122,6 +122,9 @@ function supportedDevice(device) {
         case 'switch.multilevel':
             device.component = 'light'
             device.command = true
+        case 'switch.multilevel.beams':
+            device.component = 'light'
+            device.command = true
     }
 
     // Check if device is a lock
